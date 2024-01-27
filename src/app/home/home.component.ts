@@ -154,6 +154,8 @@ export class HomeComponent {
     this.modalAnimationClass = 'modal-closing';
     setTimeout(() => {
       this.showModal = false;
+      this.fileName = ''; 
+      this.errorMessage = '';
       this.formErrors = []; 
       this.resetForm(); 
     }, 300); 
