@@ -12,7 +12,7 @@ import { FormsModule, NgForm } from '@angular/forms';
 })
 export class HomeComponent {
   @ViewChild('fileInput') fileInputRef: ElementRef | undefined;
-  fileName: string = ''; 
+  fileName: string = '';
   modalAnimationClass = '';
   errorMessage: string = '';
   showModal = false;
@@ -43,10 +43,10 @@ export class HomeComponent {
     this.hideConfirmPassword = !this.hideConfirmPassword;
   }
 
- 
+
   resetForm(form?: NgForm): void {
     if (form) {
-      form.resetForm(); 
+      form.resetForm();
     } else {
       this.safeName = '';
       this.password = '';
@@ -58,7 +58,7 @@ export class HomeComponent {
   }
 
   submitForm(form: NgForm): void {
-    this.formErrors = []; 
+    this.formErrors = [];
 
     if (!this.safeName) {
       this.formErrors.push("Le nom du coffre-fort est requis.");
@@ -70,7 +70,7 @@ export class HomeComponent {
       this.formErrors.push("La confirmation du mot de passe est requise.");
     }
 
-    
+
     if (this.password && this.confirmPassword) {
       if (this.password !== this.confirmPassword) {
         this.formErrors.push("Les mots de passe ne correspondent pas.");
@@ -78,7 +78,7 @@ export class HomeComponent {
         this.formErrors.push("Le mot de passe doit contenir au minimum 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
       }
     }
- 
+
 
     if (this.formErrors.length > 0) {
       this.resetForm(form);
@@ -88,25 +88,25 @@ export class HomeComponent {
     if (this.formErrors.length === 0) {
       const safeData = {
         safeName: this.safeName,
-        password: this.password, 
+        password: this.password,
       };
 
-      localStorage.setItem('safeData', JSON.stringify(safeData));    
+      localStorage.setItem('safeData', JSON.stringify(safeData));
       console.log('Données du coffre-fort enregistrées', safeData);
       this.resetForm(form);
       this.closeModal();
     }
- 
+
     console.log('Formulaire soumis', this.safeName, this.password);
     this.resetForm(form);
   }
 
   deleteFile(event: MouseEvent): void {
-    event.stopPropagation(); 
+    event.stopPropagation();
     this.fileName = '';
     this.errorMessage = '';
     if (this.fileInputRef) {
-      this.fileInputRef.nativeElement.value = ''; 
+      this.fileInputRef.nativeElement.value = '';
     }
   }
 
@@ -115,7 +115,7 @@ export class HomeComponent {
   }
 
   onDragOver(event: DragEvent): void {
-    event.preventDefault(); 
+    event.preventDefault();
   }
 
   onDrop(event: DragEvent): void {
@@ -139,7 +139,7 @@ export class HomeComponent {
       this.errorMessage = '';
       console.log('Fichier JSON détecté:', file.name);
     } else {
-      this.errorMessage = 'Veuillez déposer uniquement des fichiers JSON.'; 
+      this.errorMessage = 'Veuillez déposer uniquement des fichiers JSON.';
       this.fileName = '';
     }
   }
@@ -154,12 +154,11 @@ export class HomeComponent {
     this.modalAnimationClass = 'modal-closing';
     setTimeout(() => {
       this.showModal = false;
-      this.fileName = ''; 
+      this.fileName = '';
       this.errorMessage = '';
-      this.formErrors = []; 
-      this.resetForm(); 
-    }, 300); 
+      this.formErrors = [];
+      this.resetForm();
+    }, 300);
   }
 }
 
- 
