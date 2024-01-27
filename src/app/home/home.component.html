@@ -1,1 +1,92 @@
-<p>home works!</p>
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <div class="card" [ngClass]="cardAnimationClass" *ngIf="!showModal">
+    <div class="card-header text-center">
+      Bienvenue sur votre gestionnaire de mots de passe
+    </div>
+
+    <div class="card-body">
+      <div *ngIf="fileName" class="alert alert-success" role="alert">
+        Le coffre fort '{{ fileName }}' a été importé avec succès.
+      </div>
+      <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+        {{ errorMessage }}
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 border-right d-flex align-items-center justify-content-center">
+          <div class="drop-zone" 
+     (click)="fileName ? null : fileInput.click()" 
+     (dragover)="onDragOver($event)" 
+     (drop)="onDrop($event)">
+            <p *ngIf="!fileName">Glissez votre coffre-fort ici ou cliquez pour sélectionner</p>
+            <div *ngIf="fileName" class="file-info">
+              <div class="file-actions">
+                <button class="btn btn-danger btn-sm" (click)="deleteFile($event)">Supprimer</button>
+                <button class="btn btn-success btn-sm" (click)="sendFile()">Confimer</button>
+              </div>
+            </div>
+            <input #fileInput type="file" accept=".json" style="display: none;" (change)="onFileSelected($event)">
+          </div>
+        </div>
+          <div class="col-12 d-md-none">
+            <hr> 
+          </div>
+
+          <div class="col-md-6 d-flex align-items-center justify-content-center">
+            <button class="btn btn-primary" (click)="openModal()">Créer un nouveau coffre-fort</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+
+<div *ngIf="showModal"  [ngClass]="cardAnimationClass" (close)="closeModal()" class="modal show d-block" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-dialog-centered" role="document"> 
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Nouveau Coffre-fort</h5>
+          <button type="button" class="btn-close" aria-label="Close" (click)="closeModal()">
+           
+          </button>
+        </div>
+        <div class="modal-body">
+          <form #passwordForm="ngForm">
+            <div class="form-group">
+
+              <input type="text" class="form-control" id="safe-name" placeholder="Nom du coffre-fort" [(ngModel)]="safeName" name="safeName">
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <input [type]="hidePassword ? 'password' : 'text'" class="form-control" id="password" placeholder="Mot de passe" [(ngModel)]="password" name="password">
+                <span class="input-group-text">
+                  <i class="bi" [class]="hidePassword ? 'bi-eye-slash' : 'bi-eye'" (click)="togglePasswordVisibility()"></i>
+                </span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="input-group">
+                <input [type]="hideConfirmPassword ? 'password' : 'text'" class="form-control" id="confirm-password" placeholder="Confirmer le mot de passe" [(ngModel)]="confirmPassword" name="confirmPassword">
+                <span class="input-group-text">
+                  <i class="bi" [class]="hideConfirmPassword ? 'bi-eye-slash' : 'bi-eye'" (click)="toggleConfirmPasswordVisibility()"></i>
+                </span>
+              </div>
+            </div>
+            <div *ngFor="let error of formErrors" class="alert alert-danger" role="alert" style="margin-top: 10px;">
+              {{ error }}
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" (click)="resetForm(passwordForm); closeModal();">Fermer</button>
+          <button type="button" class="btn btn-primary" (click)="submitForm(passwordForm)" [disabled]="passwordForm.invalid">Sauvegarder</button>
+        </div>
+        </div>
+        </div>
+      </div>
+    
+  
+
+  
+  

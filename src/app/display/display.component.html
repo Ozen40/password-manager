@@ -1,0 +1,16 @@
+<table class="table table-hover table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Nom</th>
+            <th scope="col">Mot de passe</th>
+            <th scope="col">Catégorie</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let entry of vault">
+            <td>{{entry.name}}</td>
+            <td>{{entry.password}}</td>
+            <td>{{entry.category}}</td>
+        </tr>
+    </tbody>
+</table>
