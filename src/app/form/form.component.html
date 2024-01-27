@@ -1,0 +1,17 @@
+<div>
+    <h2>Création de mot de passe</h2>
+    <form (ngSubmit)="onSubmit()">
+        <label for="nom">Nom:</label>
+        <input type="text" id="nom" [(ngModel)]="utilisateur.nom" name="nom" required>
+
+        <label for="motDePasse">Mot de passe:</label>
+        <input type="password" id="motDePasse" [(ngModel)]="utilisateur.motDePasse" name="motDePasse" required>
+
+        <label for="categorie">Catégorie:</label>
+        <select id="categorie" [(ngModel)]="utilisateur.categorie" name="categorie" required>
+            <option *ngFor="let cat of categories" [value]="cat">{{cat}}</option>
+        </select>
+
+        <button type="submit">Ajouter</button>
+    </form>
+</div>
