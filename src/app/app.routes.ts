@@ -4,6 +4,7 @@ import { DisplayComponent } from './display/display.component';
 
 export const routes: Routes = [
     { path: 'home', component: HomeComponent },
-    { path: 'display', component: DisplayComponent }
+    { path: 'display', component: DisplayComponent },
+    { path: '**', component: HomeComponent}
 ];
 

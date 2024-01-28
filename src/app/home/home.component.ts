@@ -1,8 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
-import * as CryptoJS from 'crypto-js';
 import { EncryptionService } from '../service/encryptionService';
+import { ActivatedRoute, Router} from '@angular/router';
 
 
 @Component({
@@ -31,7 +31,8 @@ export class HomeComponent {
   hidePassword: boolean = true;
   hideConfirmPassword: boolean = true;
 
-  constructor(private encryptionService: EncryptionService) {}
+  constructor(private encryptionService: EncryptionService,  private route: ActivatedRoute,
+    private router: Router) {}
 
 
   validatePassword(): boolean {
@@ -98,6 +99,7 @@ export class HomeComponent {
       console.log('Données du coffre-fort enregistrées', safeData);
       this.resetForm(form);
       this.closeModal();
+      this.router.navigate(['/display'], { relativeTo: this.route });
     }
 
     console.log('Formulaire soumis', this.safeName, this.password);
