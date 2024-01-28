@@ -1,12 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-form',
+  standalone: true,
+  imports: [FormsModule, CommonModule],
   templateUrl: './form.component.html',
-  styleUrls: ['./form.component.css']
+  styleUrl: './form.component.css'
 })
-export class FormComponent implements OnInit {
-
+export class FormComponent {
   categories: string[] = ['Personnel', 'Travail', 'Autre']; // Liste des catégories
 
   utilisateur: any = {
@@ -15,13 +18,7 @@ export class FormComponent implements OnInit {
     categorie: ''
   };
 
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
   onSubmit(): void {
     console.log('Données soumises : ', this.utilisateur);
   }
-
 }
