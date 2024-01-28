@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
+import * as CryptoJS from 'crypto-js';
+import { EncryptionService } from '../service/encryptionService';
 
 
 @Component({
@@ -18,7 +20,6 @@ export class HomeComponent {
   showModal = false;
 
   cardAnimationClass: string = '';
-
   formErrors: string[] = [];
 
 
@@ -29,6 +30,9 @@ export class HomeComponent {
   formError: string = '';
   hidePassword: boolean = true;
   hideConfirmPassword: boolean = true;
+
+  constructor(private encryptionService: EncryptionService) {}
+
 
   validatePassword(): boolean {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
@@ -90,8 +94,7 @@ export class HomeComponent {
         safeName: this.safeName,
         password: this.password,
       };
-
-      localStorage.setItem('safeData', JSON.stringify(safeData));
+      this.encryptionService.encrypt(JSON.stringify(safeData), this.password);
       console.log('Données du coffre-fort enregistrées', safeData);
       this.resetForm(form);
       this.closeModal();
@@ -109,6 +112,8 @@ export class HomeComponent {
       this.fileInputRef.nativeElement.value = '';
     }
   }
+
+  
 
   sendFile(): void {
     console.log('Envoi du fichier:', this.fileName);
