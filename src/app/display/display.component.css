@@ -1,0 +1,140 @@
+@keyframes modalOpen {
+    from {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
+  @keyframes modalClose {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .animated-fade-in {
+    animation: fadeIn 0.5s ease forwards;
+  }
+  
+  
+  @keyframes zoomFadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9); 
+    }
+    to {
+      opacity: 1;
+      transform: scale(1); 
+    }
+  }
+  
+  .animated-zoom-fade-in {
+    animation: zoomFadeIn 0.5s ease forwards;
+  }
+  
+  .border-right {
+    border-right: 1px solid #ccc;
+    height: 100%; 
+  }
+  
+  hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid #ccc;
+  }
+  
+  
+  @media (max-width: 770px) {
+    .border-right {
+      border-right: none; 
+    }
+  
+    hr {
+      display: show; 
+    }
+  }
+  
+  .modal {
+    animation-duration: 0.3s; 
+    animation-fill-mode: forwards; 
+  }
+  
+  .modal-opening {
+    animation-name: modalOpen;
+  }
+  
+  .modal-closing {
+    animation-name: modalClose;
+  }
+  
+  
+    .card {
+      max-width: 50rem; 
+      width: 100%; 
+      margin-left: 10px;
+      margin-right: 10px;
+    
+    }
+  
+  
+  .drop-zone, .btn {
+    margin: 10px; 
+    width: auto; 
+  }
+  
+    .drop-zone {
+      margin: 10px;
+      width: 250px;
+      height: 200px; 
+      width: 100%;
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      text-align: center;
+      vertical-align: middle;
+      line-height: 200px; 
+    }
+    
+    .drop-zone p {
+      display: inline-block;
+      vertical-align: middle;
+      line-height: normal;
+    }
+  
+    .form-group{
+      margin-top: 10px;
+    }
+    .modal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1050;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      outline: 0;
+      
+  
+      
+    }
+    
+  
