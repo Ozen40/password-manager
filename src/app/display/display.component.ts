@@ -80,9 +80,13 @@ export class DisplayComponent {
 
   onSubmitModif(form?: NgForm): void {
     this.validerForm(form);
+    this.resetForm(form);
+    this.closeModal();
   }
   onSubmitCrea(form?: NgForm): void {
     this.validerForm(form);
+    this.resetForm(form);
+    this.closeModal();
   }
   private validerMotDePasse(motDePasse: string): boolean {
     return /[A-Z]/.test(motDePasse);
