@@ -11,6 +11,10 @@ import { ExportService } from '../service/exportService';
   styleUrls: ['./display.component.css'],
 })
 export class DisplayComponent {
+  constructor() {
+    this.retrieveDataFromLocalStorage();
+  }
+
   showModal = false;
   modalAnimationClass = '';
   errorMessage: string = '';
@@ -22,36 +26,40 @@ export class DisplayComponent {
   formError: string = '';
   etapeCrea: boolean = false;
   etapeModif: boolean = false;
+  hideConfirmPassword: boolean = true;
+
 
   categories: string[] = ['Personnel', 'Travail', 'Banque', 'Autre'];
 
   utilisateur: any = {
     nom: '',
     motDePasse: '',
-    categorie: ''
+    categorie: '',
   };
 
   constructor(private exportService: ExportService){}
+  vault: Password[] = [];
 
-  vault: Password[] = [
-    {
-      "name": "Crédit agricole",
-      "password": "qsdfghjkk",
-      "category": "Banque"
-    },
-    {
-      "name": "Gmail",
-      "password": "xcvbnbtut",
-      "category": "Mail"
-    },
-  ];
+  retrieveDataFromLocalStorage(): void {
+    if (typeof localStorage !== 'undefined') {
+      let data = localStorage.getItem('jsonFileContent');
+
+      if (data) {
+        let jsonArray = JSON.parse(data);
+
+        jsonArray.forEach((element: Password) => {
+          this.vault.push(element);
+        });
+      }
+    }
+  }
 
   popupMDP(mdp: Password): void {
     this.showModal = true;
     this.utilisateur.nom = mdp?.name;
-    this.utilisateur.password = mdp?.password;
+    this.utilisateur.motDePasse = mdp?.password;
     this.utilisateur.categorie = mdp?.category;
-    
+
     this.cardAnimationClass = 'animated-zoom-fade-in';
     this.modalAnimationClass = 'animated-zoom-fade-in';
 
@@ -77,8 +85,12 @@ export class DisplayComponent {
     }, 300);
   }
 
-  supprimerMDP(msp: Password): void {
-    console.log(msp + " a été supp des mdp")
+  supprimerMDP(mdp: Password): void {
+    const index = this.vault.indexOf(mdp);
+    if (index != -1) {
+      this.vault.splice(index, 1);
+      localStorage.setItem('jsonFileContent', JSON.stringify(this.vault));
+    }
   }
 
   onSubmitModif(form?: NgForm): void {
@@ -106,26 +118,46 @@ export class DisplayComponent {
   }
   validerForm(form?: NgForm) {
     if (!this.utilisateur.nom) {
-      this.formErrors.push("Le nom du mot de passe est requis.");
+      this.formErrors.push('Le nom du mot de passe est requis.');
     }
     if (!this.utilisateur.motDePasse) {
-      this.formErrors.push("Le mot de passe est requis.");
+      this.formErrors.push('Le mot de passe est requis.');
     }
     if (!this.utilisateur.categorie) {
-      this.formErrors.push("Une catégorie est requise.");
+      this.formErrors.push('Une catégorie est requise.');
     }
     if (!this.validerMotDePasse(this.utilisateur.motDePasse)) {
-      this.formErrors.push("Le mot de passe doit contenir au minimum 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.");
-
+      this.formErrors.push(
+        'Le mot de passe doit contenir au minimum 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial.'
+      );
     }
 
-    if (this.champNomValide && this.champMotDePasseValide && this.champCategorieValide) {
-      console.log('Données soumises : ', form);
+    if (
+      this.champNomValide &&
+      this.champMotDePasseValide &&
+      this.champCategorieValide
+    ) {
+      const newEntry: Password = {
+        name: this.utilisateur.nom,
+        password: this.utilisateur.motDePasse,
+        category: this.utilisateur.categorie,
+      };
+      this.vault.push(newEntry);
+      localStorage.setItem('jsonFileContent', JSON.stringify(this.vault));
+      console.log('Données soumises : ', newEntry);
     }
   }
+<<<<<<< .mine
   exportToJSON(){
   this.exportService.exportToJSON('safeData','Coffre');
   }
+
+=======
+
+  toggleConfirmPasswordVisibility(): void {
+    this.hideConfirmPassword = !this.hideConfirmPassword;
+  }
+>>>>>>> .theirs
 }
 
 export interface Password {
