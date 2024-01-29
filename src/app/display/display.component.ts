@@ -11,9 +11,6 @@ import { ExportService } from '../service/exportService';
   styleUrls: ['./display.component.css'],
 })
 export class DisplayComponent {
-  constructor() {
-    this.retrieveDataFromLocalStorage();
-  }
 
   showModal = false;
   modalAnimationClass = '';
@@ -37,7 +34,10 @@ export class DisplayComponent {
     categorie: '',
   };
 
-  constructor(private exportService: ExportService){}
+  constructor(private exportService: ExportService){
+    this.retrieveDataFromLocalStorage();
+  }
+
   vault: Password[] = [];
 
   retrieveDataFromLocalStorage(): void {
@@ -147,17 +147,14 @@ export class DisplayComponent {
       console.log('Données soumises : ', newEntry);
     }
   }
-<<<<<<< .mine
   exportToJSON(){
   this.exportService.exportToJSON('safeData','Coffre');
   }
 
-=======
 
   toggleConfirmPasswordVisibility(): void {
     this.hideConfirmPassword = !this.hideConfirmPassword;
   }
->>>>>>> .theirs
 }
 
 export interface Password {
