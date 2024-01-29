@@ -1,14 +1,14 @@
-// encryption.service.ts
-
 import { Injectable } from '@angular/core';
 import * as CryptoJS from 'crypto-js';
+import { stringify } from 'querystring';
 
 @Injectable({
-  providedIn: 'root', // Enregistrez le service au niveau racine
+  providedIn: 'root',
 })
 export class EncryptionService {
   private keySize = 256;
   private iterations = 1000;
+  private encryptedData = '';
 
   encrypt(data: string, password: string): void {
 
@@ -29,28 +29,54 @@ export class EncryptionService {
     localStorage.setItem('safeData', encryptedData);
   }
 
-  decrypt(password: string): string | null {
-    const encryptedData = localStorage.getItem('safeData');
+  decrypt(password: string, file: File): Promise<string | null> {
+    return this.readFileContent(file)
+      .then((encryptedData) => {
+        if (!encryptedData) {
+          return null; // Aucune donnée chiffrée trouvée dans la localStorage
+        }
 
-    if (!encryptedData) {
-      return null; // Aucune donnée chiffrée trouvée dans la localStorage
-    }
+        const salt = CryptoJS.enc.Hex.parse(encryptedData.substr(0, 32));
+        const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(32, 32));
+        const encryptedText = encryptedData.substring(64);
+        try{
+        const key = CryptoJS.PBKDF2(password, salt, {
+          keySize: this.keySize / 32,
+          iterations: this.iterations,
+        });
 
-    const salt = CryptoJS.enc.Hex.parse(encryptedData.substr(0, 32));
-    const iv = CryptoJS.enc.Hex.parse(encryptedData.substr(32, 32));
-    const encryptedText = encryptedData.substring(64);
+        const decrypted = CryptoJS.AES.decrypt(encryptedText, key, {
+          iv: iv,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7,
+        });
 
-    const key = CryptoJS.PBKDF2(password, salt, {
-      keySize: this.keySize / 32,
-      iterations: this.iterations,
+        return decrypted.toString(CryptoJS.enc.Utf8);
+      }
+      catch(error){
+        return null
+      }
+      })
+      .catch((error) => {
+        console.error('Erreur lors de la lecture du fichier :', error);
+        return null;
+      });
+  }
+
+  private readFileContent(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+
+      fileReader.onload = (event: ProgressEvent<FileReader>) => {
+        const content = event.target?.result as string;
+        resolve(content);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+
+      fileReader.readAsText(file);
     });
-
-    const decrypted = CryptoJS.AES.decrypt(encryptedText, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    });
-
-    return decrypted.toString(CryptoJS.enc.Utf8);
   }
 }

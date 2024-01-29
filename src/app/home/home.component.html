@@ -19,12 +19,6 @@
      (dragover)="onDragOver($event)" 
      (drop)="onDrop($event)">
             <p *ngIf="!fileName">Glissez votre coffre-fort ici ou cliquez pour sélectionner</p>
-            <div *ngIf="fileName" class="file-info">
-              <div class="file-actions">
-                <button class="btn btn-danger btn-sm" (click)="deleteFile($event)">Supprimer</button>
-                <button class="btn btn-success btn-sm" (click)="sendFile()">Confimer</button>
-              </div>
-            </div>
             <input #fileInput type="file" accept=".json" style="display: none;" (change)="onFileSelected($event)">
           </div>
         </div>

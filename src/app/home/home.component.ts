@@ -2,13 +2,18 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { EncryptionService } from '../service/encryptionService';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router} from '@angular/router';
+import { PasswordDialogComponent } from '../password-dialog/password-dialog.component';
+import { MatDialog, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, FormsModule],
+  providers: [
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true, direction: 'ltr'}}
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -31,8 +36,8 @@ export class HomeComponent {
   hidePassword: boolean = true;
   hideConfirmPassword: boolean = true;
 
-  constructor(private encryptionService: EncryptionService, private route: ActivatedRoute,
-    private router: Router) { }
+  constructor(private encryptionService: EncryptionService,  private route: ActivatedRoute,
+    private router: Router, public dialog: MatDialog) {}
 
 
   validatePassword(): boolean {
@@ -106,21 +111,6 @@ export class HomeComponent {
     this.resetForm(form);
   }
 
-  deleteFile(event: MouseEvent): void {
-    event.stopPropagation();
-    this.fileName = '';
-    this.errorMessage = '';
-    if (this.fileInputRef) {
-      this.fileInputRef.nativeElement.value = '';
-    }
-  }
-
-
-
-  sendFile(): void {
-    console.log('Envoi du fichier:', this.fileName);
-  }
-
   onDragOver(event: DragEvent): void {
     event.preventDefault();
   }
@@ -129,34 +119,25 @@ export class HomeComponent {
     event.preventDefault();
     const files = event.dataTransfer?.files;
     if (files && files.length > 0) {
-      const file = files[0];
-      this.handleFile(file);
+      this.handleFile(files[0]);
     }
   }
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      this.handleFile(file);
+    if (input.files && input.files.length > 0) {0
+      this.handleFile(input.files[0]);
     }
   }
 
   private handleFile(file: File): void {
-    if (file && file.type === 'application/json') {
-      const reader = new FileReader();
-
-      reader.onload = (loadEvent) => {
-        const fileContent = loadEvent.target?.result as string;
-
-        localStorage.setItem('jsonFileContent', fileContent);
-        console.log(fileContent);
-        console.log('Contenu du fichier JSON enregistré dans le stockage local.');
-      };
-
-      reader.readAsText(file);
+    if (file.type === "application/json") {
+      this.openPasswordDialog(file);
+      this.errorMessage = '';
+      console.log('Fichier JSON détecté:', file.name);
     } else {
-      console.error('Veuillez sélectionner un fichier JSON.');
+      this.errorMessage = 'Veuillez déposer uniquement des fichiers JSON.';
+      this.fileName = '';
     }
   }
 
@@ -176,5 +157,36 @@ export class HomeComponent {
       this.resetForm();
     }, 300);
   }
+
+  openPasswordDialog(file: File): void {
+    const dialogRef = this.dialog.open(PasswordDialogComponent, {
+      width: '400px', // Adjust the width as needed
+      height: '200px', // Adjust the height as needed
+      position: {
+        top: "-31%",
+        left: '40vw',
+      },
+      data: { password: '' }
+    });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) { 
+        this.encryptionService.decrypt(result,file).then(fileDecrypt => {
+          console.log(fileDecrypt);
+          if(fileDecrypt != null){
+            this.fileName = file.name;
+            this.router.navigate(['/display'], { relativeTo: this.route });
+          }
+          else{
+            this.errorMessage = "Le mot de passe est incorrect";
+          }
+        });
+        // Vous pouvez effectuer d'autres actions ici avec le mot de passe
+      } else {
+        // L'utilisateur a annulé la saisie du mot de passe
+        console.log('Saisie annulée');
+      }
+    });
+  }
+  // }
 }
 

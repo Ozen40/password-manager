@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { ExportService } from '../service/exportService';
 
 @Component({
   selector: 'app-display',
@@ -29,6 +30,8 @@ export class DisplayComponent {
     motDePasse: '',
     categorie: ''
   };
+
+  constructor(private exportService: ExportService){}
 
   vault: Password[] = [
     {
@@ -120,7 +123,9 @@ export class DisplayComponent {
       console.log('Données soumises : ', form);
     }
   }
-  
+  exportToJSON(){
+  this.exportService.exportToJSON('safeData','Coffre');
+  }
 }
 
 export interface Password {
