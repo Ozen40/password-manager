@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import * as CryptoJS from 'crypto-js';
-import { stringify } from 'querystring';
 
 @Injectable({
   providedIn: 'root',
@@ -9,11 +8,17 @@ export class EncryptionService {
   private keySize = 256;
   private iterations = 1000;
   private encryptedData = '';
+  password : string | null = '';
 
-  encrypt(data: string, password: string): void {
+  getPassword(): void {
+    this.password = localStorage.getItem("secretKey")
+  }
 
+  encrypt(data: string): any {
+    this.getPassword();
+    if(this.password){
     const salt = CryptoJS.lib.WordArray.random(128 / 8);
-    const key = CryptoJS.PBKDF2(password, salt, {
+    const key = CryptoJS.PBKDF2(this.password, salt, {
       keySize: this.keySize / 32,
       iterations: this.iterations,
     });
@@ -26,7 +31,9 @@ export class EncryptionService {
     });
 
     const encryptedData = salt.toString() + iv.toString() + encrypted.toString();
-    localStorage.setItem('safeData', encryptedData);
+    return encryptedData
+   }
+   return null;
   }
 
   decrypt(password: string, file: File): Promise<string | null> {
@@ -50,7 +57,7 @@ export class EncryptionService {
           mode: CryptoJS.mode.CBC,
           padding: CryptoJS.pad.Pkcs7,
         });
-
+        localStorage.setItem('jsonFileContent', decrypted.toString(CryptoJS.enc.Utf8));
         return decrypted.toString(CryptoJS.enc.Utf8);
       }
       catch(error){

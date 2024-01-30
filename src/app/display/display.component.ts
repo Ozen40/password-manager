@@ -1,6 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
+import { filter } from 'rxjs';
+import { EncryptionService } from '../service/encryptionService';
 import { ExportService } from '../service/exportService';
 
 @Component({
@@ -24,6 +26,7 @@ export class DisplayComponent {
   etapeCrea: boolean = false;
   etapeModif: boolean = false;
   hideConfirmPassword: boolean = true;
+  masterPassword : string | null = '';
 
 
   categories: string[] = ['Personnel', 'Travail', 'Banque', 'Autre'];
@@ -34,9 +37,14 @@ export class DisplayComponent {
     categorie: '',
   };
 
-  constructor(private exportService: ExportService){
+  constructor(private exportService: ExportService, private encryptionService : EncryptionService){
     this.retrieveDataFromLocalStorage();
   }
+
+  ngOnInit(): void {
+    this.masterPassword = localStorage.getItem("secretKey");
+  }
+
 
   vault: Password[] = [];
 
@@ -148,7 +156,7 @@ export class DisplayComponent {
     }
   }
   exportToJSON(){
-  this.exportService.exportToJSON('safeData','Coffre');
+  this.exportService.exportToJSON('jsonFileContent','Coffre');
   }
 
 

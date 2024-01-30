@@ -3,8 +3,10 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { EncryptionService } from '../service/encryptionService';
 import { ActivatedRoute, Router} from '@angular/router';
+import * as CryptoJS from 'crypto-js';
 import { PasswordDialogComponent } from '../password-dialog/password-dialog.component';
 import { MatDialog, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
+import { ThisReceiver } from '@angular/compiler';
 
 
 @Component({
@@ -40,6 +42,9 @@ export class HomeComponent {
     private router: Router, public dialog: MatDialog) {}
 
 
+  setPassword(){
+    localStorage.setItem('secretKey',CryptoJS.SHA256(this.password).toString(CryptoJS.enc.Hex))
+  }
   validatePassword(): boolean {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
     return regex.test(this.password);
@@ -96,12 +101,7 @@ export class HomeComponent {
     }
 
     if (this.formErrors.length === 0) {
-      const safeData = {
-        safeName: this.safeName,
-        password: this.password,
-      };
-      this.encryptionService.encrypt(JSON.stringify(safeData), this.password);
-      console.log('Données du coffre-fort enregistrées', safeData);
+      this.setPassword();
       this.resetForm(form);
       this.closeModal();
       this.router.navigate(['/display'], { relativeTo: this.route });
@@ -125,9 +125,10 @@ export class HomeComponent {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {0
+    if (input.files && input.files.length > 0) {
       this.handleFile(input.files[0]);
     }
+    input.value = null as any;
   }
 
   private handleFile(file: File): void {
@@ -160,8 +161,8 @@ export class HomeComponent {
 
   openPasswordDialog(file: File): void {
     const dialogRef = this.dialog.open(PasswordDialogComponent, {
-      width: '400px', // Adjust the width as needed
-      height: '200px', // Adjust the height as needed
+      width: '400px',
+      height: '200px',
       position: {
         top: "-31%",
         left: '40vw',
@@ -170,9 +171,10 @@ export class HomeComponent {
     });
     dialogRef.afterClosed().subscribe(result => {
       if (result) { 
-        this.encryptionService.decrypt(result,file).then(fileDecrypt => {
-          console.log(fileDecrypt);
+        this.encryptionService.decrypt(CryptoJS.SHA256(result).toString(CryptoJS.enc.Hex),file).then(fileDecrypt => {
           if(fileDecrypt != null){
+            this.password = result;
+            this.setPassword();
             this.fileName = file.name;
             this.router.navigate(['/display'], { relativeTo: this.route });
           }
@@ -180,9 +182,7 @@ export class HomeComponent {
             this.errorMessage = "Le mot de passe est incorrect";
           }
         });
-        // Vous pouvez effectuer d'autres actions ici avec le mot de passe
       } else {
-        // L'utilisateur a annulé la saisie du mot de passe
         console.log('Saisie annulée');
       }
     });
