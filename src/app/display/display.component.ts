@@ -26,7 +26,7 @@ export class DisplayComponent {
   etapeCrea: boolean = false;
   etapeModif: boolean = false;
   hideConfirmPassword: boolean = true;
-  masterPassword : string | null = '';
+  masterPassword: string | null = '';
 
 
   categories: string[] = ['Personnel', 'Travail', 'Banque', 'Autre'];
@@ -37,12 +37,14 @@ export class DisplayComponent {
     categorie: '',
   };
 
-  constructor(private exportService: ExportService, private encryptionService : EncryptionService){
+  constructor(private exportService: ExportService, private encryptionService: EncryptionService) {
     this.retrieveDataFromLocalStorage();
   }
 
   ngOnInit(): void {
-    this.masterPassword = localStorage.getItem("secretKey");
+    if (typeof localStorage !== 'undefined') {
+      this.masterPassword = localStorage.getItem("secretKey");
+    }
   }
 
 
@@ -155,8 +157,8 @@ export class DisplayComponent {
       console.log('Données soumises : ', newEntry);
     }
   }
-  exportToJSON(){
-  this.exportService.exportToJSON('jsonFileContent','Coffre');
+  exportToJSON() {
+    this.exportService.exportToJSON('jsonFileContent', 'Coffre');
   }
 
 

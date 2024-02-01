@@ -2,19 +2,17 @@ import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
 import { EncryptionService } from '../service/encryptionService';
-import { ActivatedRoute, Router} from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import * as CryptoJS from 'crypto-js';
 import { PasswordDialogComponent } from '../password-dialog/password-dialog.component';
 import { MatDialog, MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
-import { ThisReceiver } from '@angular/compiler';
-
 
 @Component({
   selector: 'app-home',
   standalone: true,
   imports: [CommonModule, FormsModule],
   providers: [
-    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {hasBackdrop: true, direction: 'ltr'}}
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true, direction: 'ltr' } }
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
@@ -38,12 +36,12 @@ export class HomeComponent {
   hidePassword: boolean = true;
   hideConfirmPassword: boolean = true;
 
-  constructor(private encryptionService: EncryptionService,  private route: ActivatedRoute,
-    private router: Router, public dialog: MatDialog) {}
+  constructor(private encryptionService: EncryptionService, private route: ActivatedRoute,
+    private router: Router, public dialog: MatDialog) { }
 
 
-  setPassword(){
-    localStorage.setItem('secretKey',CryptoJS.SHA256(this.password).toString(CryptoJS.enc.Hex))
+  setPassword() {
+    localStorage.setItem('secretKey', CryptoJS.SHA256(this.password).toString(CryptoJS.enc.Hex))
   }
   validatePassword(): boolean {
     const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{12,}$/;
@@ -170,15 +168,15 @@ export class HomeComponent {
       data: { password: '' }
     });
     dialogRef.afterClosed().subscribe(result => {
-      if (result) { 
-        this.encryptionService.decrypt(CryptoJS.SHA256(result).toString(CryptoJS.enc.Hex),file).then(fileDecrypt => {
-          if(fileDecrypt != null){
+      if (result) {
+        this.encryptionService.decrypt(CryptoJS.SHA256(result).toString(CryptoJS.enc.Hex), file).then(fileDecrypt => {
+          if (fileDecrypt != null) {
             this.password = result;
             this.setPassword();
             this.fileName = file.name;
             this.router.navigate(['/display'], { relativeTo: this.route });
           }
-          else{
+          else {
             this.errorMessage = "Le mot de passe est incorrect";
           }
         });
@@ -187,6 +185,5 @@ export class HomeComponent {
       }
     });
   }
-  // }
 }
 
