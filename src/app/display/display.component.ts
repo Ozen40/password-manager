@@ -171,14 +171,16 @@ export class DisplayComponent {
   generatePassword(): void {
     const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lowercaseLetters = 'abcdefghijklmnopqrstuvwxyz';
+    const specialCaracters = '@$!%*?&';
     const numbers = '0123456789';
 
-    const allCharacters = uppercaseLetters + lowercaseLetters + numbers;
+    const allCharacters = uppercaseLetters + lowercaseLetters + numbers + specialCaracters;
 
     let password = '';
 
     password += this.getRandomCharacter(uppercaseLetters);
     password += this.getRandomCharacter(numbers);
+    password += this.getRandomCharacter(specialCaracters);
 
     for (let i = password.length; i < 12; i++) {
       password += this.getRandomCharacter(allCharacters);
