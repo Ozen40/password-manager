@@ -28,6 +28,8 @@ export class DisplayComponent {
   hideConfirmPassword: boolean = true;
   masterPassword: string | null = '';
 
+  generatedPassword: string = '';
+
 
   categories: string[] = ['Personnel', 'Travail', 'Banque', 'Autre'];
 
@@ -164,6 +166,40 @@ export class DisplayComponent {
 
   toggleConfirmPasswordVisibility(): void {
     this.hideConfirmPassword = !this.hideConfirmPassword;
+  }
+
+  generatePassword(): void {
+    const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lowercaseLetters = 'abcdefghijklmnopqrstuvwxyz';
+    const numbers = '0123456789';
+
+    const allCharacters = uppercaseLetters + lowercaseLetters + numbers;
+
+    let password = '';
+
+    password += this.getRandomCharacter(uppercaseLetters);
+    password += this.getRandomCharacter(numbers);
+
+    for (let i = password.length; i < 12; i++) {
+      password += this.getRandomCharacter(allCharacters);
+    }
+
+    this.generatedPassword = this.shuffleString(password);
+    this.utilisateur.motDePasse = this.generatedPassword;
+  }
+
+  getRandomCharacter(characters: string): string {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    return characters[randomIndex];
+  }
+
+  shuffleString(input: string): string {
+    const array = input.split('');
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array.join('');
   }
 }
 
